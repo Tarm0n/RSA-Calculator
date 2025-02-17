@@ -1,0 +1,88 @@
+print("Hallo! Bitte geben Sie zwei Primzahlen ein.")
+prim_1 = int(input("\nPrimzahl 1: "))
+prim_2 = int(input("Primzahl 2: "))
+pk_1 = True
+pk_2 = True
+
+#überprüfen, ob die eingegebenen Zahlen identisch sind
+while prim_1 == prim_2:
+    print("Die Zahlen, die Sie eingeben, dürfen nicht identisch sein.")
+    prim_1 = int(input("\nPrimzahl 1: "))
+    prim_2 = int(input("Primzahl 2: "))
+    
+#überprüfen, ob die eingegebenen Zahlen tatsächlich Primzahlen sind
+teiler = []
+for i in range(2, prim_1):
+    prim_ko = prim_1 % i
+    if prim_ko == 0:
+        teiler.append(str(i))
+    while len(teiler) != 0:
+        print("\nDie erste Zahl ist keine Primzahl.")
+        prim_1 = int(input("Primzahl 1: "))
+for i in range(2, prim_2):
+    prim_ko = prim_2 % i
+    if prim_ko == 0:
+        teiler.append(str(i))
+    while len(teiler) != 0:
+        print("\Die zweite Zahl ist keine Primzahl.")
+        prim_2 = int(input("Primzahl 2: "))
+if pk_1 == True and pk_2 == True:
+    print("\nBeide Zahlen sind Primzahlen.")
+
+n = prim_1 * prim_2 #Öffentliche Zahl n
+print(f"\nIhre öffentliche Zahl n ist {n}.")
+
+phi_n = (prim_1-1)*(prim_2-1) #φ(n)
+print(f"\nφ(n) = {phi_n}.")
+
+e = int(input("\n\nBitte wählen Sie eine Zahl, die teilerfremd ist: \n"))
+#überprüfen, ob die eingegebene Zahl teilerfremd ist.
+for c in range (2,phi_n): 
+    while (e%c == 0) and (phi_n%c == 0):
+        print("\nDie Zahl, die Sie eingegeben haben, ist nicht teilerfremd zu φ(n).")
+        e = int(input("\nBitte wählen Sie eine Zahl, die teilerfremd ist: \n"))
+
+#öffentlicher Schlüssel
+print(f"\nIhr öffentlicher Schlüssel lautet: {n}, {e}.\n")
+
+#d für privaten Schlüssel
+def extended_euclidean_algorithm(a, b):
+    if b == 0:
+        return (a, 1, 0)
+    else:
+        (d, x, y) = extended_euclidean_algorithm(b, a % b)
+        return (d, y, x - (a // b) * y)
+
+(_, d, _) = extended_euclidean_algorithm(e, phi_n)
+
+#d muss positiv sein
+if d < 0:
+    d += phi_n
+
+print(f"Ihr privater Schlüssel lautet: {n}, {d}.\n\n")
+
+#Verschlüsselung
+
+klartext = input("Was möchten Sie verschlüsseln?\n")
+kryptotext = [str((ord(c) ** e) % n) for c in klartext]
+print(f"\nIhr Text wurde verschlüsselt: {' '.join(kryptotext)}\n")
+
+
+#Entschlüsselung
+klartext_2 = []
+
+for i in kryptotext:
+    i = int(i)
+    entschluesselt = (i ** d) % n
+    klartext_2.append(entschluesselt)
+
+print(f"Ihr Text wurde entschlüsselt: {klartext_2}\n")
+
+#Buchstaben
+ergebnis = ""
+
+for i in klartext_2:
+    buchstabe = chr(i)
+    ergebnis += buchstabe
+
+print(f"Ihr Klartext lautet: '{ergebnis}'.")
